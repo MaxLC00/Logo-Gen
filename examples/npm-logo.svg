@@ -1,0 +1,6 @@
+
+        <svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="150, 10 290, 190 10, 190" fill="pink" />
+            <text x="150" y="120" text-anchor="middle" font-family="Arial" font-size="40" fill="black">npm</text>
+        </svg>
+        

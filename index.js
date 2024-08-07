@@ -1,7 +1,7 @@
 const inquirer = require('inquirer');
 const fs = require('fs');
 const colors = require('colors');
-const shapes = require('./lib/shapes')
+const { Circle, Square, Triangle } = require('./lib/shapes.js')
 
 const questions = [
     {
@@ -18,7 +18,7 @@ const questions = [
     },
     {
         type: 'input',
-        name: 'color',
+        name: 'textColor',
         message: 'Enter a color (a keyword or hexadecimal number) for the text color:',
         when: ({ colorChoice }) => {
             if (colorChoice.indexOf('Enter my own (hex code or standard name)') > -1) {
@@ -30,7 +30,7 @@ const questions = [
     },
     {
         type: 'list',
-        name: 'color',
+        name: 'textColor',
         message: 'Choose one of the following colors:',
         choices: ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'white'],
         when: ({ colorChoice }) => {
@@ -67,7 +67,7 @@ const questions = [
     },
     {
         type: 'list',
-        name: 'ShapeColor',
+        name: 'shapeColor',
         message: 'Choose on of the following colors:',
         choices: ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'black'],
         when: ({ shapeChoice }) => {
@@ -80,8 +80,38 @@ const questions = [
     },
 ]
 
-function init() {
-    return inquirer.prompt(questions);
+async function init() {
+    try {
+        const answers = await inquirer.prompt(questions);
+        const { text, textColor, shape, shapeColor } = answers;
+        let newShape;
+
+        switch (shape) {
+            case 'Circle':
+                newShape = new Circle(shapeColor);
+                break;
+            case 'Triangle':
+                newShape = new Triangle(shapeColor);
+                break;
+            case 'Square':
+                newShape = new Square(shapeColor);
+                break;
+        }
+
+        const svg = `
+        <svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
+            ${newShape.render()}
+            <text x="150" y="120" text-anchor="middle" font-family="Arial" font-size="40" fill="${textColor}">${text}</text>
+        </svg>
+        `;
+
+        fs.writeFileSync('logo.svg', svg);
+        console.log('Logo saved');
+
+    } catch (error) {
+        console.error(error);
+    }
 }
+
 
 init();
